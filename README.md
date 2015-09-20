@@ -11,7 +11,7 @@
   $username = "username";
   $password = "password";
   ```
-  * Andmebaasi nimi lisa aga kindlasti enda faili ja `require_once` käsuga küsi muutujad enda faili, siis saan kodust tööd kontrollida
+  * Andmebaasi nimi lisa aga kindlasti enda faili ja `require_once` käsuga küsi parool ja kasutajanimi `config.php` failist, siis saan kodust tööd lihtsamini kontrollida
   ```PHP
   // ühenduse loomiseks kasuta
   require_once("../config.php");
