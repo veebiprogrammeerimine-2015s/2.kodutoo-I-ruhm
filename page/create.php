@@ -43,13 +43,27 @@ $email = "";
 					$password = cleanInput($_POST["password"]);
 				}
 			}
+			if ($_POST["gender"]){
+					$gender = cleanInput($_POST["gender"]);
+				}
+			if ($_POST["First_name"]){
+					
+					$First_name = cleanInput($_POST["First_name"]);
+				}
+			if ($_POST["Last_name"]){
+					$Last_name = cleanInput($_POST["Last_name"]);
+				}
+			if ($_POST["Address"]){
+					$Address = cleanInput($_POST["Address"]);
+				}
+			
 			if(	$email_error == "" && $pw_error == ""){
 				echo "User can be created. Username is ".$email." and password is ".$password;
 				$hash = hash("sha512", $password);
 	
-				$stmt=$mysqli->prepare("INSERT INTO user_sample(email, password) VALUES (?,?)");
-				
-				$stmt->bind_param("ss", $email, $hash);
+				$stmt=$mysqli->prepare("INSERT INTO user(email, password,gender,first_name,last_name,address) VALUES (?,?,?,?,?,?)");
+				echo $mysqli->error;
+				$stmt->bind_param("ssssss", $email, $hash, $gender, $First_name, $Last_name, $Address);
 				
 				$stmt->execute();
 				
