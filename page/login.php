@@ -57,8 +57,34 @@
 				echo "Kontrollin ".$email." ".$password;
 			}
 			
+			//Kasutaja sisselogimine, kui vigu 0
+			
+			if($password_error == "" && $email_error == ""){
+				echo "Sisse logimine! Kasutajanimi on ".$email." ja parool on ".$password;
+				
+				$hash = hash("sha512", $password);
+				
+				$stmt = $mysqli->prepare("SELECT id, email FROM ntb_andmed WHERE email=? AND password=? ");
+				//kysimarkide asendus
+				$stmt->bind_param("ss", $email, $hash);
+				//andmebaasist tulnud muutujad
+				$stmt->bind_result($id_from_db, $email_from_db);
+				$stmt->execute();
+				//teeb paringu ja kui on toene (st et ab oli see vaartus)
+				if($stmt->fetch()) {
+					
+					echo "kasutaja logis sisse id=".$id_from_db;
+					
+				} else {
+					
+					echo "Kasutajanimi või parool vale";
+				}
+			}
 		}
 	}
+	
+	//LOGIMISE LOPP
+	
 	
 	//Registreerumise errorid
 	$reg_email_error = "";
