@@ -116,7 +116,7 @@
 			
 			if(	$email_2_error == "" && $password_2_error == "" && $comment_error == "" && $comment_2_error == ""){
 				echo hash("sha512", $password_2);
-				echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2.". Vanus on ".$comment.". Sugu on ".$comment_2".";
+				echo " Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2.". Vanus on ".$comment.". Sugu on ".$comment_2.".";
 			
 				$hash = hash("sha512", $password_2);
 				
