@@ -1,5 +1,15 @@
 <?php
 
+	//loome AB ühenduse
+	require_once("../../config.php");
+	$database = "if15_naaber";
+	$mysqli = new mysqli($servername, $username, $password, $database);
+	
+	//check connection
+	if ($mysqli->connect_error) {
+		die("connect error ".mysqli_connect_error());
+	}
+	
 	//jutumärkide vahele input elemendi NAME
 	//echo $_POST["email"];
 	//echo $_POST["password"];
@@ -23,7 +33,8 @@
             } else {
                 
                 // annan väärtuse
-                $email = test_input($_POST["email"]);
+                $email = cleanInput($_POST["email"]);
+				
                 
             }
             
@@ -31,17 +42,39 @@
             if(empty($_POST["password"])) {
                 $password_error = "Ei saa olla tühi";
             } else {
-                $password = test_input($_POST["password"]);
+                $password = cleanInput($_POST["password"]);
             }
             
             if($password_error == "" && $email_error == ""){
                 // erroreid ei olnud
-                echo "Kontrollin ".$email." ".$password; 
+                echo "Võib sisse logida! Kasutajanimi on ".$email." ".$password;
+				
+				$hash = hash("sha512", $password);
+                
+                $stmt = $mysqli->prepare("SELECT id, email FROM users_naaber WHERE email=? AND password=?");
+                // küsimärkide asendus
+                $stmt->bind_param("ss", $email, $hash);
+                //ab tulnud muutujad
+                $stmt->bind_result($id_from_db, $email_from_db);
+                $stmt->execute();
+                
+                // teeb päringu ja kui on tõene (st et ab oli see väärtus)
+                if($stmt->fetch()){
+                    
+                    // Kasutaja email ja parool õiged
+                    echo "Kasutaja logis sisse id=".$id_from_db;
+                    
+                }else{
+                    echo "Wrong credentials!";
+                }
+                
+                $stmt->close();
+				
             }
         } 
     }
 	
-	function test_input($data) {
+	function cleanInput($data) {
 		$data = trim($data);
 		$data = stripslashes($data);
 		$data = htmlspecialchars($data);

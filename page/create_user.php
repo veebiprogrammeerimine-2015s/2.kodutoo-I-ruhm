@@ -1,4 +1,13 @@
 <?php	
+
+	require_once("../../config.php");
+	$database = "if15_naaber";
+	$mysqli = new mysqli($servername, $username, $password, $database);
+	
+	if ($mysqli->connect_error) {
+		die("connect error ".mysqli_connect_error());
+	}
+	
 	$create_user_email_error = "";
 	$create_user_password_error = "";
 	$first_name_error = "";
