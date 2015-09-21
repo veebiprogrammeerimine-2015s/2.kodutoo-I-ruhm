@@ -40,6 +40,7 @@
 	$name = "";
 	$surname = "";
 	$newemail = "";
+	$dob = "";
 	
 	//isset - ütleb kas asi on olemas
 	//empty - kas on tühi
@@ -140,6 +141,15 @@
 				
 			}
 			
+			if(!empty($_POST["comment"])){
+				$comment = test_input($_POST["comment"]);
+			}
+			
+			if(!empty($_POST["dob"])){
+				$dob = test_input($_POST["dob"]);
+			}
+			
+			
 			if(!empty($_POST["gender"])){
 				$gender = test_input($_POST["gender"]);
 			}
@@ -154,8 +164,8 @@
 					
 				$hash = hash("sha512", $password1);
 				
-				$stmt = $mysqli->prepare("INSERT INTO users (name, surname, email, password) VALUES (?,?,?,?)");
-				$stmt->bind_param("ssss", $name, $surname, $newemail, $hash);
+				$stmt = $mysqli->prepare("INSERT INTO users (name, surname, email, password, comment, dob, gender) VALUES (?,?,?,?,?,?,?)");
+				$stmt->bind_param("sssssss", $name, $surname, $newemail, $hash, $comment, $dob, $gender);
 				
 				$stmt->execute();
 				
