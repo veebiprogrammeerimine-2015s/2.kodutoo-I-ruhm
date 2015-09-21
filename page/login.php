@@ -7,15 +7,31 @@
 	//echo $_POST["password"];
 	//echo $_POST["comment"];
 	
+	//loome AB ühenduse
+    require_once("../config.php");
+    $database = "if15_merit26_1";
+    $mysqli = new mysqli($servername, $username, $password, $database);
+    
+    //check connection
+    if($mysqli->connect_error) {
+        die("connect error ".mysqli_connect_error());
+	// muuutujad errorite jaoks
 	$email_error = "" ;
 	$password_error = "" ;
-	$comment_error = "" ;
+	
 	$email_2_error = "" ;
 	$password_2_error = "" ;
-      //Muutujad väärtustega
+	$comment_error = "" ;
+	$comment_2_error = "" ;
+	
+      //Muutujad väärtuste jaoks
 	 $email = "";
 	 $password = "";
+	 $email_2 = "";
+	 $password_2 = "";
 	 $comment = "";
+	 $comment_2 = "";
+	 
 	// kontrolli ainult siis, kui kasutaja vajutab "logi sisse" nuppu
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
 		
@@ -28,15 +44,15 @@
 			} else {
 				
 				//annan väärtuse
-				$email = test_input($_POST["email"]);
+				$email = cleaninput($_POST["email"]);
 				
-			}
+			    }
 		
-			//kontrollime parooli	
-			if(empty($_POST["password"])) { 
-				$password_error = "Ei saa olla tühi";
+			    //kontrollime parooli	
+			    if(empty($_POST["password"])) { 
+				  $password_error = "Ei saa olla tühi";
 			} else { 
-			  $password = test_input($_POST["password"]);
+			      $password = cleaninput($_POST["password"]);
 			}
 		  
 			//if(empty($_POST["comment"])) { 
@@ -45,9 +61,34 @@
 			//	$comment = test_input($_POST["comment"]);
 			//}
 
-
-
-		} elseif(isset($_POST["create"])){
+                if($password_error == "" && $email_error == ""){
+		       echo "Võib sisse logida! Kasutajanimi on ".$email." ja parool on ".$password;
+			   
+			$hash = hash("sha512", $password);	
+			
+		    $stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
+                // küsimärkide asendus
+                $stmt->bind_param("ss", $email, $hash);
+                //ab tulnud muutujad
+                $stmt->bind_result($id_from_db, $email_from_db);
+                $stmt->execute();
+                
+                // teeb päringu ja kui on tõene (st et ab oli see väärtus)
+                if($stmt->fetch()){
+                    
+                    // Kasutaja email ja parool õiged
+                    echo "Kasutaja logis sisse id=".$id_from_db;
+                    
+                }else{
+                    echo "Valed andmed!";
+                }
+                
+                $stmt->close();
+               
+		} 
+		         } 
+				 
+		elseif(isset($_POST["create"])){
 		
 		if(empty($_POST["email_2"])) { 
 			$email_2_error = "Ei saa olla täitmata";
@@ -55,11 +96,31 @@
 		}
 			if(empty($_POST["password_2"])) { 
 			$password_2_error = "Ei saa olla täitmata";
+		    } else {
+				if(strlen($_POST["password_2"]) < 8) {
+					$create_password_error = "Peab olema vähemalt 8 tähemärki pikk!";
+				}else{
+					$create_password = cleanInput($_POST["create_password"]);
+				}
+			}
+		//siia vahele tuleb see commentite osa juurde teha
+		if(	$email_error_2 == "" && $password_error_2 == ""){
+				echo hash("sha512", $create_password);
+                echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2;
 		
-		}	
+		$hash = hash("sha512", $password_2);
+			
+	     $stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password) VALUES (?,?)");
+	
+		$stmt->bind_param("ss", $create_email, $hash); //iga string on s
+                
+                //käivitab sisestuse
+                $stmt->execute();
+                $stmt->close();
+				
+				}
+        } 
 	}
-	}
-		
 		
 	function test_input($data) {
       $data = trim($data);
@@ -89,11 +150,11 @@
 	        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"?>
 			<input name="email_2" type="email" placeholder="E-post">*<?php echo $email_2_error; ?><br> <br>
 			<input name="password_2" type="password" placeholder="parool">*<?php echo $password_2_error; ?> <br> <br>
-			<input name="comment" type="text" placeholder="comment"> <br> <br> 
-			<textarea name="comment1" type="text" cols= "40" rows= "5" placeholder="see võib tühi ka olla"></textarea> <br> <br>
-			<textarea name="comment2" type="text" cols= "60" rows= "5"> Enda tööks planeerin trennipäeviku koostamise. Tegemist võiks olla sellise asjaga, kuhu inimene kirjutab, et mis päevadel ja mida ta täpselt tegi. Andmete põhjal saaks siis teha erinevaid arvutusi ja järeldusi.</textarea> <br> <br>
-			<input name="option1" type="checkbox" value="o1"> Sain aru. <br>
-			<input name="option2" type="checkbox" value="o2"> Oskasin laadida githubi. <br>
+			<input name="comment" type="text" placeholder="vanus"> <br> <br> 
+			<input name="comment_2" type="text" placeholder="sugu mees/naine"> <br> <br> 
+			
+			<textarea name="comment_3" type="text" cols= "60" rows= "5"> Enda tööks planeerin trennipäeviku koostamise. Tegemist võiks olla sellise asjaga, kuhu inimene kirjutab, et mis päevadel ja mida ta täpselt tegi. Andmete põhjal saaks siis teha erinevaid arvutusi ja järeldusi.</textarea> <br> <br>
+			
 
 			<input name="create" type="submit" value="loo kasutaja"> 
 		</form>	
