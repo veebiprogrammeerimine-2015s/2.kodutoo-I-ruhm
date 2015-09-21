@@ -80,6 +80,9 @@
 		$data = htmlspecialchars($data);
 		return $data;
 	}
+	
+	$mysqli->close();
+	
 ?>
 <?php
 

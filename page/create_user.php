@@ -25,7 +25,7 @@
 			if(empty($_POST["create_user_email"])) {
 				$create_user_email_error = "Ei saa olla tühi";
 			} else {
-				$create_user_email = test_input($_POST["create_user_email"]);
+				$create_user_email = cleanInput($_POST["create_user_email"]);
 			}
 			
 			if(empty($_POST["create_user_password"])) {
@@ -33,33 +33,56 @@
 			} elseif(strlen($_POST["create_user_password"]) < 8) {
 					$create_user_password_error = "Peab olema vähemalt 8 sümbolit pikk";
 			} else {
-				$create_user_password = test_input($_POST["create_user_password"]);
+				$create_user_password = cleanInput($_POST["create_user_password"]);
 			}
 			
 			if(empty($_POST["first_name"])) {
 				$first_name_error = "Ei saa olla tühi";
 			} else {
-				$first_name = test_input($_POST["first_name"]);
+				$first_name = cleanInput($_POST["first_name"]);
 			}
 			
 			if(empty($_POST["last_name"])) {
 				$last_name_error = "Ei saa olla tühi";
 			} else {
-				$last_name = test_input($_POST["last_name"]);
+				$last_name = cleanInput($_POST["last_name"]);
 			}
 			
 			if($create_user_password_error == "" && $create_user_email_error == "" && $first_name_error == "" && $last_name_error == ""){
-				echo "Kontrollin ".$first_name." ".$last_name." ".$create_user_email." ".$create_user_password;
+				echo hash("sha512", $create_user_password);
+				echo $first_name." ".$last_name." võib kasutajat luua! Kasutajanimi on ".$create_user_email." ja parool on ".$create_user_password;
+				
+				//tekitan parooliräsi
+				$hash = hash("sha512", $create_user_password);
+				
+				//salvestan andmebaasi
+				$stmt = $mysqli ->prepare("INSERT INTO users_naaber (first_name, last_name, email, password) VALUES (?,?,?,?)");
+				
+				// kirjutan välja errori
+				echo $stmt->error;
+				echo $mysqli->error;
+				
+				//paneme muutujad küsimärkide asemel
+				// ss - s string, iga muutuja kohta üks täht
+				$stmt->bind_param ("ssss", $first_name, $last_name, $create_user_email, $hash);
+				
+				$stmt->execute();
+				$stmt->close();
+				
+				
+				
 			}
 		}
 	}
 	
-	function test_input($data) {
+	function cleanInput($data) {
       $data = trim($data);
       $data = stripslashes($data);
       $data = htmlspecialchars($data);
       return $data;
 	}
+	
+	$mysqli->close();
 
 ?>
 <?php
