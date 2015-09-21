@@ -1,5 +1,16 @@
 <?php
 
+	//loome ühenduse andmebaasiga
+	require_once("../../config.php");
+	$database = "if15_rasmrei";
+	$mysqli = new mysqli($servername, $username, $password, $database);
+	
+	// check connection
+	if($mysqli->connect_error) {
+		die("connect error".mysqli_connect_error());		
+	}
+	
+
 	//user_form.php
 	
 	//jutumärkide vahele input elemndi NAME
@@ -17,6 +28,8 @@
 	$password = "";
 	$create_email = "";
 	$create_password = "";
+	
+	
 
 	
 	// Kontrolli ainult siis kui kasutaja vajutab logi sisse nuppu
