@@ -1,13 +1,14 @@
 <?php
 
 	//loome AB ühenduse
-    require_once("../config.php");
+    require_once("../../config.php");
     $database = "if15_merit26_1";
     $mysqli = new mysqli($servername, $username, $password, $database);
     
     //check connection
     if($mysqli->connect_error) {
         die("connect error ".mysqli_connect_error());
+	}
 	
 	// muuutujad errorite jaoks
 	$email_error = "" ;
@@ -48,76 +49,92 @@
 			}
 		  
 			if($password_error == "" && $email_error == ""){
-		      echo "Sisselogimine. Kasutajanimi on ".$email." ja parool on ".$password;
+				echo "Sisselogimine. Kasutajanimi on ".$email." ja parool on ".$password;
 			   
-			$hash = hash("sha512", $password);	
-			
-		    $stmt = $mysqli->prepare("SELECT id, email FROM MINU ANDMEBAAS WHERE email=? AND password=?");
-                // küsimärkide asendus
-                $stmt->bind_param("ss", $email, $hash);
-                //ab tulnud muutujad
-                $stmt->bind_result($id_from_db, $email_from_db);
-                $stmt->execute();
-                
-                // teeb päringu ja kui on tõene (st et ab oli see väärtus)
-                if($stmt->fetch()){
-                    
-                    // Kasutaja email ja parool õiged
-                    echo "Kasutaja logis sisse id=".$id_from_db;
-                    
-                }else{
-                    echo "Valed andmed!";
-                }
-                
-                $stmt->close();
+				$hash = hash("sha512", $password);	
+
+				$stmt = $mysqli->prepare("SELECT id, email FROM MINU ANDMEBAAS WHERE email=? AND password=?");
+				// küsimärkide asendus
+				$stmt->bind_param("ss", $email, $hash);
+				//ab tulnud muutujad
+				$stmt->bind_result($id_from_db, $email_from_db);
+				$stmt->execute();
+				
+				// teeb päringu ja kui on tõene (st et ab oli see väärtus)
+				if($stmt->fetch()){
+					
+					// Kasutaja email ja parool õiged
+					echo "Kasutaja logis sisse id=".$id_from_db;
+					
+				}else{
+					echo "Valed andmed!";
+				}
+				
+				$stmt->close();
                
-		} 
-		         } 
-				 
-		elseif(isset($_POST["create"])){
+			} 
 		
-		if(empty($_POST["email_2"])) { 
-			$email_2_error = "Ei saa olla täitmata";
-		} 	else {
-		}
+		
+		
+		
+		
+		
+		
+		
+		} elseif(isset($_POST["create"])) {
+		
+			if(empty($_POST["email_2"])) { 
+				$email_2_error = "Ei saa olla täitmata";
+			} 	else {
+				// siin on puudu
+			}
+			
 			if(empty($_POST["password_2"])) { 
-			$password_2_error = "Ei saa olla täitmata";
+				$password_2_error = "Ei saa olla täitmata";
 		    } else {
 				if(strlen($_POST["password_2"]) < 8) {
 					$password_2_error = "Peab olema vähemalt 8 tähemärki pikk!";
 				}else{
 					$password_2 = cleanInput($_POST["password_2"]);
+				}
+			}
 					
 			if(empty($_POST["comment"])) { 
-			$comment_error = "Ei saa olla tühi";
-			else {
-			$comment = cleanInput($_POST["comment"]);
+				$comment_error = "Ei saa olla tühi";
+			} else {
+				$comment = cleanInput($_POST["comment"]);
 			}
+			
 			if(empty($_POST["comment_2"])) { 
-			$comment_2_error = "Ei saa olla tühi";
-			else {
-			$comment_2 = cleanInput($_POST["comment_2"]);
+				$comment_2_error = "Ei saa olla tühi";
+			} else {
+				$comment_2 = cleanInput($_POST["comment_2"]);
 			}
 			
-				}
-			}
-		if(	$email_error_2 == "" && $password_error_2 == "" && $comment_error == "" && $comment_2_error == ""){
+			
+			
+			
+			if(	$email_error_2 == "" && $password_error_2 == "" && $comment_error == "" && $comment_2_error == ""){
 				echo hash("sha512", $password_2);
-                echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2 "vanus on ".$comment "sugu on".$comment_2;
-		
-		$hash = hash("sha512", $password_2);
+				echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2."vanus on ".$comment." sugu on".$comment_2;
 			
-	     $stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password, comment, comment_2") VALUES (?,?,?,?)");
-	
-		$stmt->bind_param("ssss", $email_2, $hash, $comment, $comment_2" ); //iga string on s
-                
-                //käivitab sisestuse
-                $stmt->execute();
-                $stmt->close();
+				$hash = hash("sha512", $password_2);
 				
-				}
-        } 
-	}
+				$stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password, comment, comment_2) VALUES (?,?,?,?)");
+		
+				$stmt->bind_param("ssss", $email_2, $hash, $comment, $comment_2); //iga string on s
+					
+				//käivitab sisestuse
+				$stmt->execute();
+				$stmt->close();
+					
+			}
+			
+		}
+			
+		
+    } 
+	
 		
 	function cleanInput($data) {
       $data = trim($data);
