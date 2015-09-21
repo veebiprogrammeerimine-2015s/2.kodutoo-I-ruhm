@@ -6,8 +6,18 @@
 	//echo $_POST["email"];
 	//echo $_POST["password"];
 	
+	// muuutujad errorite jaoks
 	$email_error = "";
 	$password_error = "";
+	$create_email_error = "";
+	$create_password_error = "";
+
+  // muutujad väärtuste jaoks
+	$email = "";
+	$password = "";
+	$create_email = "";
+	$create_password = "";
+
 	
 	// Kontrolli ainult siis kui kasutaja vajutab logi sisse nuppu
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
