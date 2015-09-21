@@ -42,31 +42,23 @@
 			if(empty($_POST["email"])) { 
 				$email_error = "Ei saa olla tühi";
 			} else {
-				
 				//annan väärtuse
 				$email = cleaninput($_POST["email"]);
-				
-			    }
+			}
 		
-			    //kontrollime parooli	
-			    if(empty($_POST["password"])) { 
-				  $password_error = "Ei saa olla tühi";
+			//kontrollime parooli	
+			if(empty($_POST["password"])) { 
+				 $password_error = "Ei saa olla tühi";
 			} else { 
 			      $password = cleaninput($_POST["password"]);
 			}
 		  
-			//if(empty($_POST["comment"])) { 
-				//$comment_error = "Ei saa olla tühi";
-			//} else {
-			//	$comment = test_input($_POST["comment"]);
-			//}
-
-                if($password_error == "" && $email_error == ""){
-		       echo "Võib sisse logida! Kasutajanimi on ".$email." ja parool on ".$password;
+			if($password_error == "" && $email_error == ""){
+		      echo "Sisselogimine. Kasutajanimi on ".$email." ja parool on ".$password;
 			   
 			$hash = hash("sha512", $password);	
 			
-		    $stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
+		    $stmt = $mysqli->prepare("SELECT id, email FROM MINU ANDMEBAAS WHERE email=? AND password=?");
                 // küsimärkide asendus
                 $stmt->bind_param("ss", $email, $hash);
                 //ab tulnud muutujad
@@ -98,21 +90,32 @@
 			$password_2_error = "Ei saa olla täitmata";
 		    } else {
 				if(strlen($_POST["password_2"]) < 8) {
-					$create_password_error = "Peab olema vähemalt 8 tähemärki pikk!";
+					$password_2_error = "Peab olema vähemalt 8 tähemärki pikk!";
 				}else{
-					$create_password = cleanInput($_POST["create_password"]);
+					$password_2 = cleanInput($_POST["password_2"]);
+					
+			if(empty($_POST["comment"])) { 
+			$comment_error = "Ei saa olla tühi";
+			else {
+			$comment = cleanInput($_POST["comment"]);
+			}
+			if(empty($_POST["comment_2"])) { 
+			$comment_2_error = "Ei saa olla tühi";
+			else {
+			$comment_2 = cleanInput($_POST["comment_2"]);
+			}
+			
 				}
 			}
-		//siia vahele tuleb see commentite osa juurde teha
-		if(	$email_error_2 == "" && $password_error_2 == ""){
+		if(	$email_error_2 == "" && $password_error_2 == "" && $comment_error == "" && $comment_2_error == ""){
 				echo hash("sha512", $create_password);
-                echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2;
+                echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2 "vanus on ".$comment "sugu on".$comment_2;
 		
 		$hash = hash("sha512", $password_2);
 			
-	     $stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password) VALUES (?,?)");
+	     $stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password, comment, comment_2") VALUES (?,?,?,?)");
 	
-		$stmt->bind_param("ss", $create_email, $hash); //iga string on s
+		$stmt->bind_param("ssss", $email_2, $hash, $comment, $comment_2" ); //iga string on s
                 
                 //käivitab sisestuse
                 $stmt->execute();
@@ -122,7 +125,7 @@
         } 
 	}
 		
-	function test_input($data) {
+	function cleanInput($data) {
       $data = trim($data);
       $data = stripslashes($data);
       $data = htmlspecialchars($data);
