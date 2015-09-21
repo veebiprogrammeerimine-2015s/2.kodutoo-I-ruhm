@@ -89,6 +89,8 @@
 				
 					$stmt->bind_param("ss", $email, $hash);
 					
+					$stmt->bind_result($id_from_db, $email_from_db);
+					
 					$stmt->execute();
 					
 					if($stmt->fetch()){
