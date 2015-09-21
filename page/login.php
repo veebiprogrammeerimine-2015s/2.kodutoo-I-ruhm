@@ -66,6 +66,7 @@
 				
 				$stmt = $mysqli->prepare("SELECT id, email FROM ntb_andmed WHERE email=? AND password=? ");
 				//kysimarkide asendus
+				//echo $mysqli->error;
 				$stmt->bind_param("ss", $email, $hash);
 				//andmebaasist tulnud muutujad
 				$stmt->bind_result($id_from_db, $email_from_db);
@@ -73,7 +74,7 @@
 				//teeb paringu ja kui on toene (st et ab oli see vaartus)
 				if($stmt->fetch()) {
 					
-					echo "kasutaja logis sisse id=".$id_from_db;
+					echo "kasutaja logis sisse, id=".$id_from_db;
 					
 				} else {
 					
@@ -122,6 +123,30 @@
 			} else {
 				$reg_password_repeat = test_input($_POST["reg_password_repeat"]);
 			}
+			
+			if(	$reg_email_error == "" && $reg_password_error == ""){
+				echo hash("sha512", $reg_password);
+				echo "Loome kasutaja! Kasutajanimi on ".$reg_email.", teie nimi on".$reg_name." ja parool on ".$reg_password;
+				
+				// tekitan parooliräsi
+				$hash = hash("sha512", $reg_password);
+				
+				//salvestan andmebaasi
+				$stmt = $mysqli->prepare("INSERT INTO ntb_andmed (email, name, password) VALUES (?,?,?)");
+				
+				//kirjutan valja errori
+				//echo $stmt->error();
+				
+				// paneme muutujad küsimärkide asemel
+				// ss - s string, iga muutuja koht 1 täht
+				$stmt->bind_param("sss", $reg_email, $reg_name, $hash);
+				
+				//käivitab sisestuse
+				$stmt->execute();
+				$stmt->close();
+                
+                
+            }
 		}
 	} 
 	
