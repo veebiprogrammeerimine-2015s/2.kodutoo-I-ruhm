@@ -1,6 +1,17 @@
 <?php
 
+	// ühenduse loomiseks kasuta MYSQL
+	require_once("../../config.php");
+	$database = "if15_skmw";
+	$mysqli = new mysqli($servername, $username, $password, $database);
+
+	//check connection_aborted
+	if($mysqli->connect_error){
+	die("connect error ".mysqli_connect_error());
 	
+	//kui database näiteks muuta "if15_skmw" mingi typo, siis viskab access denied ja
+	//ühendust pole
+}
 	//user_form.php
 	//jutumĆ¤rkide vahele GET-ile, see mida tahame kĆ¤tte saada input elemendist NAME HTMLis.
 	//olulised on <form action="user_form.php" method="get">
