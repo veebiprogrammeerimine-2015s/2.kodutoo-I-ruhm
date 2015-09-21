@@ -78,7 +78,24 @@
 			
 				if($email_error == "" && $password_error == ""){
 					// kui erroreid ei olnud
-					echo "Kontrollin ".$email. " " .$password;
+					echo "Võib sisse logida! Kasutaja on: ".$email. "ja parool: " .$password;
+				
+					$hash = hash("sha512", $password);
+					
+					$stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
+				
+					$stmt->bind_param("ss", $email, $hash);
+					
+					$stmt->execute();
+					
+					if($stmt->fetch()){
+						echo "kasutaja logis sisse ".$id_from_db;
+					}else{
+						echo "valed andmed!";
+					}
+					
+					$stmt->close();
+					
 				}
 			
 		}
