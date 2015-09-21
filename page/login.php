@@ -82,6 +82,8 @@
 				
 					$hash = hash("sha512", $password);
 					
+					echo $hash;
+					
 					$stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
 				
 					$stmt->bind_param("ss", $email, $hash);
@@ -91,7 +93,7 @@
 					if($stmt->fetch()){
 						echo "kasutaja logis sisse ".$id_from_db;
 					}else{
-						echo "valed andmed!";
+						echo " valed andmed!";
 					}
 					
 					$stmt->close();
@@ -146,6 +148,19 @@
 		if($name_error == "" && $surname_error == "" && $newemail_error == "" && $password1_error == ""){
 					// kui erroreid ei olnud
 					echo "Kontrollin " .$name. " " .$surname. " " .$newemail. " " .$password1;
+				
+				echo hash("sha512", $create_password);	
+				echo "võib kasutaja luua. Kasutaja eesnimi on ".$name." perekonnanimi ".$surname." email ".$newemail." parool ".$password1;
+					
+				$hash = hash("sha512", $password1);
+				
+				$stmt = $mysqli->prepare("INSERT INTO users (name, surname, email, password) VALUES (?,?,?,?)");
+				$stmt->bind_param("ssss", $name, $surname, $newemail, $hash);
+				
+				$stmt->execute();
+				
+				$stmt->close();
+				
 				}
 		
 		}
