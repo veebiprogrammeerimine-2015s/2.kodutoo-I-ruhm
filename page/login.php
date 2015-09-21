@@ -1,12 +1,5 @@
 <?php
 
-	// user_form.php
-	
-	//jutumärkide vahele input elemendi NAME
-	//echo $_POST["email"]; 
-	//echo $_POST["password"];
-	//echo $_POST["comment"];
-	
 	//loome AB ühenduse
     require_once("../config.php");
     $database = "if15_merit26_1";
@@ -15,6 +8,7 @@
     //check connection
     if($mysqli->connect_error) {
         die("connect error ".mysqli_connect_error());
+	
 	// muuutujad errorite jaoks
 	$email_error = "" ;
 	$password_error = "" ;
