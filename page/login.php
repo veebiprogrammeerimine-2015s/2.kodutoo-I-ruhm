@@ -1,11 +1,27 @@
 <?php
+//ANDMEBAASID
+
+    //AB YHENDUS
+    require_once("../../config.php");
+    $database = "if15_raunkos";
+    $mysqli = new mysqli($servername, $username, $password, $database);
+	
+	//Yhenduse kontrollimine
+    if($mysqli->connect_error) {
+        die("connect error ".mysqli_connect_error());
+    }
+
+
+?>
+<?php
+//PAGE TITLE
 	//Lehe nimi
 	$page_title = "UCP";
 	//Faili nimi
 	$page_file = "login.php";
 ?>
 <?php 
-
+// LOGIMINE JA REGISTREERUMINE
 	/* user_form.php
 	Jutumarkide vahele input elemendi NAME
 	
