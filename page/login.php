@@ -57,7 +57,7 @@
                 //küsimärkide asendus
                 
                 
-                $stmt->bind_param("ss", $email. $hash);
+                $stmt->bind_param("ss", $email, $hash);
                 //andmebaasist tulnud muutujad
                 $stmt->bind_result($id_from_db, $email_from_db);
                 $stmt->execute();
@@ -115,13 +115,13 @@
             if($firstname_error == "" && $lastname_error == "" && $email2_error == "" && $password1_error == "" ){
                 
                 echo hash ("sha512", $password1);
-                echo "Võib kasutaja luua! Kasutaja nimi on ".$email2." ja parool on ".$password1." Nimi on ".$firstname;
+                //echo "Võib kasutaja luua! Kasutaja nimi on ".$email2." ja parool on ".$password1." Nimi on ".$firstname;
                 
                  //tekitan parooliräsi
                 $hash=hash("sha512", $password1);
                 
                 //salvestan andmebaasi
-                $stmt = $mysqli->prepare("INSERT INTO users (firstname, lastname, email2, password1) VALUES (?,?,?,?)");
+                $stmt = $mysqli->prepare("INSERT INTO users (firstname, lastname, email, password) VALUES (?,?,?,?)");
                 
                 //kirjutan välja errori
                 //echo $stmt-> error;
@@ -129,7 +129,7 @@
                 
                 //paneme muutujad küsimärkide asemel
                 //ss - string, iga muutuja kohta üks täht 
-                $stmt->bind_param("ssss", $firstname, $lastname, $email1, $hash);
+                $stmt->bind_param("ssss", $firstname, $lastname, $email2, $hash);
                 
                 
                 
