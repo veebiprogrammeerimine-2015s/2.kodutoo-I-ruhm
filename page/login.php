@@ -56,10 +56,10 @@ $page_file_name = "login.php";
 			
 				$hash = hash("sha512", $password);
 				
-				$stmt = $mysqli->prepare("SELECT id FROM user_sample WHERE email=? AND password=?");
+				$stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
 				
 				//küsimärkide asendus
-				$stmt->bind_param("ss", $email, $hash);
+				$stmt->bind_param ("ss", $email, $hash);
 				//andmebaasist tulnud andmete muutujad
 				$stmt->bind_result($id_from_db, $email_from_db);
 				$stmt->execute();
@@ -67,7 +67,7 @@ $page_file_name = "login.php";
 				if($stmt->fetch()) {
 					
 					//kasutaja email ja parool õiged
-					echo "kasutaja logis sisse".$id_from_db;
+					echo " kasutaja logis sisse, ID on".$id_from_db;
 				}else{
 					echo "Wrong credentials!";
 				}				
