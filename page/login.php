@@ -102,7 +102,7 @@
 				}
 			}
 		if(	$email_error_2 == "" && $password_error_2 == "" && $comment_error == "" && $comment_2_error == ""){
-				echo hash("sha512", $create_password);
+				echo hash("sha512", $password_2);
                 echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2 "vanus on ".$comment "sugu on".$comment_2;
 		
 		$hash = hash("sha512", $password_2);
