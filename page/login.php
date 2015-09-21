@@ -53,7 +53,7 @@
 			   
 				$hash = hash("sha512", $password);	
 
-				$stmt = $mysqli->prepare("SELECT id, email FROM MINU ANDMEBAAS WHERE email=? AND password=?");
+				$stmt = $mysqli->prepare("SELECT id, email FROM veebivorm WHERE email=? AND password=?");
 				// küsimärkide asendus
 				$stmt->bind_param("ss", $email, $hash);
 				//ab tulnud muutujad
@@ -64,7 +64,7 @@
 				if($stmt->fetch()){
 					
 					// Kasutaja email ja parool õiged
-					echo "Kasutaja logis sisse id=".$id_from_db;
+					echo " Kasutaja logis sisse id=".$id_from_db;
 					
 				}else{
 					echo "Valed andmed!";
@@ -85,8 +85,9 @@
 		
 			if(empty($_POST["email_2"])) { 
 				$email_2_error = "Ei saa olla täitmata";
-			} 	else {
-				// siin on puudu
+			} else {
+				  $email_2 = cleanInput($_POST["email_2"]);
+				
 			}
 			
 			if(empty($_POST["password_2"])) { 
@@ -109,18 +110,17 @@
 				$comment_2_error = "Ei saa olla tühi";
 			} else {
 				$comment_2 = cleanInput($_POST["comment_2"]);
+			
 			}
 			
 			
-			
-			
-			if(	$email_error_2 == "" && $password_error_2 == "" && $comment_error == "" && $comment_2_error == ""){
+			if(	$email_2_error == "" && $password_2_error == "" && $comment_error == "" && $comment_2_error == ""){
 				echo hash("sha512", $password_2);
-				echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2."vanus on ".$comment." sugu on".$comment_2;
+				echo "Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2.". Vanus on ".$comment.". Sugu on ".$comment_2".";
 			
 				$hash = hash("sha512", $password_2);
 				
-				$stmt = $mysqli->prepare("INSERT INTO ANDMEBAASI NIMI (email, password, comment, comment_2) VALUES (?,?,?,?)");
+				$stmt = $mysqli->prepare("INSERT INTO veebivorm (email, password, comment, comment_2) VALUES (?,?,?,?)");
 		
 				$stmt->bind_param("ssss", $email_2, $hash, $comment, $comment_2); //iga string on s
 					
@@ -132,8 +132,8 @@
 			
 		}
 			
-		
-    } 
+	}	
+     
 	
 		
 	function cleanInput($data) {
@@ -142,6 +142,7 @@
       $data = htmlspecialchars($data);
       return $data;
 	}
+	
 ?>
 <?php
  //lehe nimi
