@@ -16,16 +16,16 @@
 	
 	$email_2_error = "" ;
 	$password_2_error = "" ;
-	$comment_error = "" ;
-	$comment_2_error = "" ;
+	$age_error = "" ;
+	$gender_error = "" ;
 	
       //Muutujad väärtuste jaoks
 	 $email = "";
 	 $password = "";
 	 $email_2 = "";
 	 $password_2 = "";
-	 $comment = "";
-	 $comment_2 = "";
+	 $age = "";
+	 $gender = "";
 	 
 	// kontrolli ainult siis, kui kasutaja vajutab "logi sisse" nuppu
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -53,7 +53,7 @@
 			   
 				$hash = hash("sha512", $password);	
 
-				$stmt = $mysqli->prepare("SELECT id, email FROM veebivorm WHERE email=? AND password=?");
+				$stmt = $mysqli->prepare("SELECT id, email FROM users WHERE email=? AND password=?");
 				// küsimärkide asendus
 				$stmt->bind_param("ss", $email, $hash);
 				//ab tulnud muutujad
@@ -100,29 +100,29 @@
 				}
 			}
 					
-			if(empty($_POST["comment"])) { 
-				$comment_error = "Ei saa olla tühi";
+			if(empty($_POST["age"])) { 
+				$age_error = "Ei saa olla tühi";
 			} else {
-				$comment = cleanInput($_POST["comment"]);
+				$age = cleanInput($_POST["age"]);
 			}
 			
-			if(empty($_POST["comment_2"])) { 
-				$comment_2_error = "Ei saa olla tühi";
+			if(empty($_POST["gender"])) { 
+				$gender_error = "Ei saa olla tühi";
 			} else {
-				$comment_2 = cleanInput($_POST["comment_2"]);
+				$gender = cleanInput($_POST["gender"]);
 			
 			}
 			
 			
-			if(	$email_2_error == "" && $password_2_error == "" && $comment_error == "" && $comment_2_error == ""){
+			if(	$email_2_error == "" && $password_2_error == "" && $age_error == "" && $gender_error == ""){
 				echo hash("sha512", $password_2);
-				echo " Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2.". Vanus on ".$comment.". Sugu on ".$comment_2.".";
+				echo " Kasutaja loomine. Kasutajanimi on ".$email_2." ja parool on ".$password_2.". Vanus on ".$age.". Sugu on ".$gender.".";
 			
 				$hash = hash("sha512", $password_2);
 				
-				$stmt = $mysqli->prepare("INSERT INTO veebivorm (email, password, comment, comment_2) VALUES (?,?,?,?)");
+				$stmt = $mysqli->prepare("INSERT INTO users (email, password, age, gender) VALUES (?,?,?,?)");
 		
-				$stmt->bind_param("ssss", $email_2, $hash, $comment, $comment_2); //iga string on s
+				$stmt->bind_param("ssss", $email_2, $hash, $age, $gender); //iga string on s
 					
 				//käivitab sisestuse
 				$stmt->execute();
@@ -165,8 +165,8 @@
 	        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"?>
 			<input name="email_2" type="email" placeholder="E-post">*<?php echo $email_2_error; ?><br> <br>
 			<input name="password_2" type="password" placeholder="parool">*<?php echo $password_2_error; ?> <br> <br>
-			<input name="comment" type="text" placeholder="vanus"> <br> <br> 
-			<input name="comment_2" type="text" placeholder="sugu mees/naine"> <br> <br> 
+			<input name="age" type="text" placeholder="vanus"> <br> <br> 
+			<input name="gender" type="text" placeholder="sugu mees/naine"> <br> <br> 
 			
 			<textarea name="comment_3" type="text" cols= "60" rows= "5"> Enda tööks planeerin trennipäeviku koostamise. Tegemist võiks olla sellise asjaga, kuhu inimene kirjutab, et mis päevadel ja mida ta täpselt tegi. Andmete põhjal saaks siis teha erinevaid arvutusi ja järeldusi.</textarea> <br> <br>
 			
