@@ -24,12 +24,14 @@ $page_file_name = "login.php";
 	$password_error = "";
 	$create_email_error = "";
 	$create_password_error = "";
+	$realname_error = "";
 
   // muutujad väärtuste jaoks
 	$email = "";
 	$password = "";
 	$create_email = "";
 	$create_password = "";
+	$realname = "";
 
 
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -95,20 +97,27 @@ $page_file_name = "login.php";
 					$create_password = cleanInput($_POST["create_password"]);
 				}
 			}
-
-			if(	$create_email_error == "" && $create_password_error == ""){
+			
+			if ( empty($_POST["realname_error"])) {
+				$realname_error = "Nime sisestamine on kohustuslik!";
+			} else {
+				$realname = cleanInput($_POST["realname"]);
+				
+			}
+			
+			if(	$create_email_error == "" && $create_password_error == "" && $realname_error == ""){
 				echo hash("sha512", $create_password);
-				echo "Võib kasutajat luua! Kasutajanimi on ".$create_email." ja parool on ".$create_password;
+				echo "Võib kasutajat luua! Kasutajanimi on ".$create_email." ja parool on ".$create_password." ja pärisnimi on ".$realname;
 				
 				//tekitan parooli räsi
 				$hash = hash("sha512", $create_password);
 				
 				//salvestan andmebaasi
-				$stmt = $mysqli->prepare("INSERT INTO user_sample (email, password) VALUES(?,?)");
+				$stmt = $mysqli->prepare("INSERT INTO user_sample (email, password, name) VALUES(?,?,?)");
 				
 				//paneme muutujad küsimärkide asemele
 				//ss - s string, iga muutuja kohta 1 täht
-				$stmt-> bind_param("ss", $create_email, $hash);
+				$stmt-> bind_param("sss", $create_email, $hash, $realname);
 				
 				//käivitab sisestuse
 				$stmt->execute();
@@ -149,7 +158,8 @@ $page_file_name = "login.php";
   <h2>Create user</h2>
   <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" >
   	<input name="create_email" type="email" placeholder="E-post" value="<?php echo $create_email; ?>"> <?php echo $create_email_error; ?><br><br>
-  	<input name="create_password" type="password" placeholder="Parool"> <?php echo $create_password_error; ?> <br><br>
+  	<input name="create_password" type="password" placeholder="Parool"> value="<?php echo $create_password_error; ?>" <br><br>
+  	<input name="realname" type="name" placeholder="Nimi" value="<?php echo $realname; ?>"><?php echo $realname_error; ?> <br><br>
   	<input type="submit" name="create" value="Create user">
   </form>
 <body>
