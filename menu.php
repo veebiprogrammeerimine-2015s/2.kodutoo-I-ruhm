@@ -1,6 +1,7 @@
 ﻿<h3> Menüü</h3>
 <ul>
 	<?php 
+	$page_file_name = "";
 	// ükskõik mise lehe puhul näitan linki aga kui on home
 	// leht siis lihtsalt nime
 	if($page_file_name != "home.php") { ?>
