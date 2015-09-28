@@ -21,16 +21,19 @@
 	$password_error = "";
 	$create_email_error = "";
 	$create_password_error = "";
+	$create_username_error = "";
 
   // muutujad väärtuste jaoks
 	$email = "";
 	$password = "";
 	$create_email = "";
 	$create_password = "";
+	$create_username = "";
+	
+	
 	
 	
 
-	
 	// Kontrolli ainult siis kui kasutaja vajutab logi sisse nuppu
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		
@@ -76,6 +79,51 @@
             }
 		}
 	}
+	 if(isset($_POST["create"])){
+			if ( empty($_POST["create_email"]) ) {
+				$create_email_error = "See väli on kohustuslik";
+			}else{
+				$create_email = cleanInput($_POST["create_email"]);
+			}
+			if ( empty($_POST["create_password"]) ) {
+				$create_password_error = "See väli on kohustuslik";
+			} else {
+				if(strlen($_POST["create_password"]) < 8) {
+					$create_password_error = "Peab olema vähemalt 8 tähemärki pikk!";
+			}else{
+					$create_password = cleanInput($_POST["create_password"]);
+			}
+				if ( empty($_POST["create_username"]) ) {
+					$create_username_error = "Tuleb valida endale nimi";
+			}else{
+						$create_username = cleanInput($_POST["create_username"]);
+					}
+			}
+			if(	$create_email_error == "" && $create_password_error == "" && $create_username_error == ""){
+				echo hash("sha512", $create_password, $create_username);
+                echo "V6ib kasutajat luua! email on ".$create_email."parool on ".$create_password."ja kasutaja on".$create_username;
+                // tekitab parooliräsi
+                $hash = hash("sha512", $create_password);
+                //salvestan andmebaasi
+                $stmt = $mysqli->prepare("INSERT INTO users (email, password, username) VALUES (?,?,?)");
+                //kirjutan välja error
+                // ss - s string, iga muutuja koht 1 täht
+                $stmt->bind_param("sss", $create_email, $hash, $create_username);
+                //käivitab sisestuse
+                $stmt->execute();
+                $stmt->close();
+            }
+        } // create if end
+	}
+  // eemaldab kõikvõimaliku üleliigse tekstist
+  function cleanInput($data) {
+  	$data = trim($data);
+  	$data = stripslashes($data);
+  	$data = htmlspecialchars($data);
+  	return $data;
+  }
+  $mysqli->close();
+
 ?>
 <?php
 	// lehe nimi
@@ -88,20 +136,21 @@
 <?php require_ONCE("../header.php"); ?>	
 	
 		<h2>Login</h2>
-		<form action="login.php" method="post">
-			<input name="email" type="email"  placeholder="e-post@kool.ee"> <?php echo $email_error; ?> <br> <br>
-			<input name="password" type="password"  placeholder="parool"> <?php echo $password_error; ?> <br> <br>
-		<form>
+		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+			<input name="email" type="email"  placeholder="e-post@kool.ee"> value="<?php echo $email; ?>"> <?php echo $email_error; ?><br><br>
+			<input name="password" type="password"  placeholder="parool"> value="<?php echo $password; ?>"> <?php echo $password_error; ?><br><br>
 			<input type="submit" value="Logi sisse">
+		</form>
+			
 		
 		<h2>Create user</h2>
 				
-		<form action="login.php" method="post">
+		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
 			<input name="name" type="text"  placeholder="Eesnimi Perenimi"> <br> <br>
-			<input name="email" type="email"  placeholder="e-post@kool.ee"> <?php echo $email_error; ?> <br> <br>
+			<input name="email" type="email"  placeholder="e-post@kool.ee"> <?php value="<?php echo $create_email; ?>"> <?php echo $create_email_error; ?><br><br>
 			<input name="password" type="password"  placeholder="parool"> <?php echo $password_error; ?> <br> <br>
-		<form>
-			<input type="submit" value="Loo kasutaja"> <br><br>
+			<input type="submit" name="create" value="Loo kasutaja">
+		</form>
 			
 			<?php require_ONCE("../footer.php"); ?>	
 	</body>
