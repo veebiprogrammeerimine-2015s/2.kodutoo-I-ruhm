@@ -11,7 +11,6 @@
 	}
 	
 
-	//user_form.php
 	
 	//jutumärkide vahele input elemndi NAME
 	//echo $_POST["email"];
@@ -34,24 +33,47 @@
 	
 	// Kontrolli ainult siis kui kasutaja vajutab logi sisse nuppu
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
-
-		//Kontrollime kasutaja e-posti et see ei ole tühi
-		if(empty($_POST["email"])) {
-		$email_error = "* Ei tohi jääda tühjaks";
-		}
 		
-		//Kontrollime parooli
-		if(empty($_POST["password"])) {
-		$password_error = "* Ei tohi jääda tühjaks";
-		}else {
+		if(isset($_POST["login"])){
+			if ( empty($_POST["email"]) ) {
+				$email_error = "See väli on kohustuslik";
+			}else{
+        // puhastame muutuja võimalikest üleliigsetest sümbolitest
+				$email = cleanInput($_POST["email"]);
+			}
+			if ( empty($_POST["password"]) ) {
+				$password_error = "See väli on kohustuslik";
+			}else{
+				$password = cleanInput($_POST["password"]);
+			}
+      // Kui oleme siia jõudnud, võime kasutaja sisse logida
+			if($password_error == "" && $email_error == ""){
+				echo "Võib sisse logida! Kasutajanimi on ".$email." ja parool on ".$password;
 			
-				//parool ei ole tühi, kontrollime pikkust
-				if(strlen($_POST["password"]) < 8 ){
-					
-					$password_error = "Peab olema vähemalt 8 sümbolit pikk";
-					
-				}
-		
+                $hash = hash("sha512", $password);
+                
+                $stmt = $mysqli->prepare("SELECT id, email FROM user_sample WHERE email=? AND password=?");
+                // küsimärkide asendus
+                $stmt->bind_param("ss", $email, $hash);
+                //ab tulnud muutujad
+                $stmt->bind_result($id_from_db, $email_from_db);
+                $stmt->execute();
+                
+                // teeb päringu ja kui on tõene (st et ab oli see väärtus)
+                if($stmt->fetch()){
+                    
+                    // Kasutaja email ja parool õiged
+                    echo "Kasutaja logis sisse id=".$id_from_db;
+                    
+                }else{
+                    echo "Wrong credentials!";
+                }
+                
+                $stmt->close();
+                
+            
+            
+            }
 		}
 	}
 ?>
@@ -66,7 +88,7 @@
 <?php require_ONCE("../header.php"); ?>	
 	
 		<h2>Login</h2>
-		<form action="user_form.php" method="post">
+		<form action="login.php" method="post">
 			<input name="email" type="email"  placeholder="e-post@kool.ee"> <?php echo $email_error; ?> <br> <br>
 			<input name="password" type="password"  placeholder="parool"> <?php echo $password_error; ?> <br> <br>
 		<form>
@@ -74,7 +96,7 @@
 		
 		<h2>Create user</h2>
 				
-		<form action="user_form.php" method="post">
+		<form action="login.php" method="post">
 			<input name="name" type="text"  placeholder="Eesnimi Perenimi"> <br> <br>
 			<input name="email" type="email"  placeholder="e-post@kool.ee"> <?php echo $email_error; ?> <br> <br>
 			<input name="password" type="password"  placeholder="parool"> <?php echo $password_error; ?> <br> <br>
