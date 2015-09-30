@@ -15,12 +15,15 @@
 	$password_error = "";
 	$create_email_error = "";
 	$create_password_error = "";
+	$create_username_error="";
+	
 
   // muutujad väärtuste jaoks
 	$email = "";
 	$password = "";
 	$create_email = "";
 	$create_password = "";
+	$create_username="";
 
 
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -51,9 +54,9 @@
 				$stmt=$mysqli->prepare("SELECT id, email FROM user_login WHERE email=? AND password=?");
 				
 				//küsimärkide asendus
-				$stmt->bind.param("ss", $email, $hash);
+				$stmt->bind_param("ss", $email, $hash);
 				//andmebaasist tulnud muutujad
-				$stmt->bind.result($id_from_db, $email_from_db);
+				$stmt->bind_result($id_from_db, $email_from_db);
 				$stmt->execute();
 				
 				//teeb päringu ja kui on tõene st et andmebaasis oli see väärtus, siis me saame otsustada mis edasi teeme
@@ -90,10 +93,15 @@
 					$create_password = cleanInput($_POST["create_password"]);
 				}
 			}
-		
-			if(	$create_email_error == "" && $create_password_error == ""){
-				echo hash("sha512", $create_password);
-				echo "Võib kasutajat luua! Kasutajanimi on ".$create_email." ja parool on ".$create_password;
+			if ( empty($_POST["create_username"]) ) {
+				$create_username_error = "See väli on kohustuslik";
+			}else{
+				$create_username = cleanInput($_POST["create_username"]);
+			}
+			
+			if(	$create_email_error == "" && $create_password_error == "" && $create_username_error == ""){
+				//echo hash("sha512", $create_password);
+				echo "Võib kasutajat luua! Kasutajanimi on ".$create_email." parool on ".$create_password." ja kasutajanimi on ".$create_username;
 				
 				//tekitan parooliräsi muutujasse hash
 				$hash= hash("sha512", $create_password);
@@ -148,9 +156,11 @@
   <h2>Create user</h2>
   <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" >
   	<input name="create_email" type="email" placeholder="E-post" value="<?php echo $create_email; ?>"> <?php echo $create_email_error; ?><br><br>
-  	<input name="create_password" type="password" placeholder="Parool"> <?php echo $create_password_error; ?> <br><br>
+  	<input name="create_password" type="password" placeholder="Parool"> <?php echo $create_password_error; ?>	<br><br>
+	<input name="create_username" type="text" placeholder="Kasutajanimi"> <?php echo $create_username_error; ?>	<br><br>
   	<input type="submit" name="create" value="Create user">
   </form>
+  
 
 <?php require_once ("./footer.php"); ?>
 
