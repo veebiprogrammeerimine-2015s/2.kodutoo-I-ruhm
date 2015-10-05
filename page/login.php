@@ -132,7 +132,7 @@
                 $hash = hash("sha512", $create_password);
                 
                 //salvestan andmebaasi
-                $stmt = $mysqli->prepare("INSERT INTO user_sample (email, password) VALUES (?,?)");
+                $stmt = $mysqli->prepare("INSERT INTO user_sample (username, email, password) VALUES (?,?,?)");
                 
                 //kirjutan välja error
                 //echo $stmt->error;
@@ -140,7 +140,7 @@
                 
                 // paneme muutujad küsimärkide asemel
                 // ss - s string, iga muutuja koht 1 täht
-                $stmt->bind_param("ss", $create_email, $hash);
+                $stmt->bind_param("sss",$create_username, $create_email, $hash);
                 
                 //käivitab sisestuse
                 $stmt->execute();
