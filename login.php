@@ -107,7 +107,7 @@
 				$hash= hash("sha512", $create_password);
 				
 				//salvestan andmebaasi
-				$stmt=$mysqli->prepare("INSERT INTO user_login (email, password) VALUES (?,?)");
+				$stmt=$mysqli->prepare("INSERT INTO user_login (email, password, kasutajanimi) VALUES (?,?,?)");
 				
 				//paneme muutujad küsimärkide asemele
 				// ss= string, iga muutuja kohta 1 täht
