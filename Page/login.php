@@ -17,6 +17,8 @@
 		$password = "";
 		$create_email = "";
 		$create_password = "";
+		$age = 0;
+		$gender = '';
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 			// *********************
 			// **** LOGI SISSE *****
@@ -65,7 +67,7 @@
     // *********************
     // ** LOO KASUTAJA *****
     // *********************
-    if(isset($_POST["create"])){
+    if(isset($_POST["sign_up"])){
 			if ( empty($_POST["create_email"]) ) {
 				$create_email_error = "See väli on kohustuslik";
 			}else{
@@ -79,6 +81,9 @@
 				}else{
 					$create_password = cleanInput($_POST["create_password"]);
 				}
+				$gender = $_POST["gender"];
+				$age = cleanInput($_POST["age"]);
+				
 			}
 			if(	$create_email_error == "" && $create_password_error == ""){
 				echo hash("sha512", $create_password);
@@ -88,7 +93,7 @@
                 $hash = hash("sha512", $create_password);
                 
                 //salvestan andmebaasi
-                $stmt = $mysqli->prepare("INSERT INTO user_sample (email, password) VALUES (?,?)");
+                $stmt = $mysqli->prepare("INSERT INTO user_sample (email, password, age, gender) VALUES (?,?,?,?)");
                 
                 //kirjutan välja error
                 //echo $stmt->error;
@@ -96,7 +101,7 @@
                 
                 // paneme muutujad küsimärkide asemel
                 // ss - s string, iga muutuja koht 1 täht
-                $stmt->bind_param("ss", $create_email, $hash);
+                $stmt->bind_param("ssis", $create_email, $hash, $age, $gender);
                 
                 //käivitab sisestuse
                 $stmt->execute();
@@ -134,9 +139,9 @@
 				<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 				
 				
-				<input name="test" type="text" placeholder="age">* <br> <br>
-				<input name="id_number" type="text" placeholder="Email">*  <br><br>
-				<input name="test" type="text" placeholder="Password">* <br> <br>
+				<input name="age" type="text" placeholder="age">* <br> <br>
+				<input name="create_email" type="email" placeholder="Email">*  <br><br>
+				<input name="create_password" type="text" placeholder="Password">* <br> <br>
 			Gender:
 			<input type="radio" name="gender"
 			<?php if (isset($gender) && $gender=="female") echo "checked";?>
