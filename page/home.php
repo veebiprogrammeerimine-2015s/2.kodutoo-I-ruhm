@@ -1,4 +1,5 @@
 <?php
+	
 	// lehe nimi
 	$page_title = "Avaleht";
 	
